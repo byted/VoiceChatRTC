@@ -10,8 +10,5 @@
     "webrtc.io-client": "latest",
     "ws": "latest"
   },
-  "scripts": {
-    "start": "example/wsServer.js"
-  },
-  "author": "Stefan Selent",
+  "author": "Stefan Selent"
 }
