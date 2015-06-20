@@ -1,0 +1,21 @@
+#voiceChat {
+    visibility: hidden;
+    position: fixed;
+    background-color: rgba(0,0,0,.4);
+    color: white;
+    margin: 5px;
+    padding: 5px;
+    bottom: 0;
+    right: 0;
+    z-index: 255;
+}
+#voiceChat .remoteStream { height: 0; width: 0; }
+
+#voiceChat button {
+    border: 1px solid #337ab7;
+    background-color: white;
+    color: #337ab7;
+    padding: 3px;
+    margin-top: 5px;
+    width: 100px;
+}

@@ -1,0 +1,17 @@
+{
+  "name": "voiceChatRTC",
+  "description": "Add a voice chat via WebRTC to a website",
+  "version": "1.0",
+  "engines": {
+    "node": ">= 0.6.0"
+  },
+  "dependencies": {
+    "webrtc.io": "latest",
+    "webrtc.io-client": "latest",
+    "ws": "latest"
+  },
+  "scripts": {
+    "start": "example/wsServer.js"
+  },
+  "author": "Stefan Selent",
+}
