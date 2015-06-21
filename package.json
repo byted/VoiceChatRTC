@@ -2,6 +2,10 @@
   "name": "voiceChatRTC",
   "description": "Add a voice chat via WebRTC to a website",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/byted/VoiceChatRTC.git"
+  },
   "engines": {
     "node": ">= 0.6.0"
   },
@@ -9,6 +13,9 @@
     "webrtc.io": "latest",
     "webrtc.io-client": "latest",
     "ws": "latest"
+  },
+  "scripts": {
+    "start": "node index.js"
   },
   "author": "Stefan Selent"
 }
