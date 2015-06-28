@@ -71,7 +71,7 @@ var VoiceChat = (function() {
         }
     }
 
-    exports.init = function(signalingServer, roomId) {
+    exports.init = function(signalingServer, roomId, keepAlive) {
         if(PeerConnection) {
             rtc.createStream({
                 "video": false,
@@ -87,6 +87,19 @@ var VoiceChat = (function() {
 
         vcElements.roomName.innerText = roomId;
         rtc.connect(signalingServer, roomId);
+
+        if(keepAlive) {
+            rtc._socket.onopen = function() {
+                setInterval(function() {
+                    if (rtc._socket.bufferedAmount == 0) {
+                        console.log("keeping ws connection alive");
+                        rtc._socket.send(JSON.stringify({
+                          "eventName": "keep-alive"
+                        }));
+                    }
+                }, 50000);
+            }
+        }
 
         rtc.on('add remote stream', function(stream, socketId) {
             console.log("ADDING REMOTE STREAM...");

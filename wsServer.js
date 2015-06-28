@@ -1,5 +1,3 @@
-var server = require('http').createServer()
-	, webRTC = require('webrtc.io').listen(server);
-
+var webRTC = require('webrtc.io');
 var port = process.env.PORT || 8090;
-server.listen(port);
+webRTC.listen(port);
