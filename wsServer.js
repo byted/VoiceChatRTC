@@ -1,58 +1,53 @@
 var server = require('http').createServer()
 	, webRTC = require('webrtc.io').listen(server);
 
-webRTC.rtc.on('userInfoUpdate', function(info, socket) {
-	console.log('[userInfoUpdate]:', info)
-	socket.username = info.username;
-	socket.isMicMuted = info.micMuted;
-	socket.areSpeakersMuted = info.areSpeakersMuted;
-	console.log('[userInfoUpdate]:', socket.id, 'was updated.');
 
-	info.socketId = socket.id;
-	// find the room the user belongs to
-	var listOfSocketsInRoom;
-	for(var room in webRTC.rtc.rooms) {
-		if (webRTC.rtc.rooms.hasOwnProperty(room)
-			&& webRTC.rtc.rooms[room].indexOf(socket.id) >= 0) {
-
-			listOfSocketsInRoom = webRTC.rtc.rooms[room];
-			break;
-		}
+function sendToOthers(srcSocket, data) {
+	var listOfSocketsInRoom = webRTC.rtc.rooms[srcSocket.room];
+	if(listOfSocketsInRoom) {
+		listOfSocketsInRoom.forEach(function(socketId) {
+			if(socketId !== srcSocket.id) {
+				webRTC.rtc.getSocket(socketId).send(JSON.stringify(data)), function(error) {
+		            if (error) {console.log(error);}
+		            else { console.log('[userInfoUpdate]: sent update to', socketId); }
+	          	};
+			}
+		});
 	}
+	else { console.log('WARNING: room', srcSocket.room, 'not found'); }
+}
 
-	listOfSocketsInRoom.forEach(function(socketId) {
-		if(socketId !== socket.id) {
-			webRTC.rtc.getSocket(socketId).send(JSON.stringify({
-				eventName: 'userInfoUpdate',
-				data: info
-			}), function(error) {
-	            if (error) {console.log(error);}
-	            else { console.log('[userInfoUpdate]: sent update to', socketId); }
-          	});
+webRTC.rtc.on('join_room', function(data, socket) {
+	console.log(data.room);
+	socket.room = data.room;
+
+	//for each registered user, send userInfo to newly connected user
+	webRTC.rtc.rooms[socket.room].forEach(function(registeredSocketId) {
+		if(registeredSocketId !== socket.id) {
+			var registeredSocket = webRTC.rtc.getSocket(registeredSocketId);
+			socket.send(JSON.stringify({
+					eventName: 'userInfoUpdate',
+					data: {
+						username: registeredSocket.username,
+						isMicMuted: registeredSocket.isMicMuted,
+						areSpeakersMuted: registeredSocket.areSpeakersMuted,
+						socketId: registeredSocket.id
+					}
+			}));
 		}
 	});
 });
 
+webRTC.rtc.on('userInfoUpdate', function(info, socket) {
+	console.log('[userInfoUpdate]:', info)
+	socket.username = info.username;
+	socket.isMicMuted = info.isMicMuted;
+	socket.areSpeakersMuted = info.areSpeakersMuted;
+	console.log('[userInfoUpdate]:', socket.id, 'was updated.');
 
-// webRTC.on('connection', function(ws) {
-// 	ws.on('message', function(json) {
-// 		var data = JSON.parse(json);
-// 		if(data.type === 'game') {
-// 			//we expect properties 'company', 'role', 'action' on 'payload'
-// 			console.log('got ingame message from', ws.id, ': ');
-// 			console.log(data.payload);
-
-// 			webRTC.rtc.sockets.forEach(function each(client) {
-// 				console.log('send out to', client.id, ':', JSON.stringify(data.payload));
-// 				client.send(JSON.stringify({
-// 					eventName: 'game update',
-// 					data: data.payload
-// 				}));
-// 				//eventName hinzufügen
-// 			});
-// 		}		
-// 	});
-//});
+	info.socketId = socket.id;
+	sendToOthers(socket, {eventName: 'userInfoUpdate', data: info});
+});
 
 var port = process.env.PORT || 8090;
 server.listen(port);

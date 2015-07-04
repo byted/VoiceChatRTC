@@ -26,7 +26,7 @@ var VoiceChat = (function() {
         muteOthersBtn.id = 'voiceChat-MuteOthersBtn';
         muteMeBtn.id = 'voiceChat-MuteMeBtn';
 
-        roomLabel.innerText = 'Room: ';
+        roomLabel.innerText = '';
         roomName.innerText = '';
         infoBar.appendChild(roomLabel);
         infoBar.appendChild(roomName);
@@ -56,15 +56,8 @@ var VoiceChat = (function() {
     }
 
     function createUserInfo(socketId) {
-        var userInfo = document.createElement('li')
-        , userName = document.createElement('span')
-        , speakersMuted = document.createElement('span')
-        , micMuted = document.createElement('span');
-        userInfo.id = 'userInfo' + socketId;        
-        userInfo.appendChild(userName);
-        userInfo.appendChild(speakersMuted);
-        userInfo.appendChild(micMuted);
-
+        var userInfo = document.createElement('li');
+        userInfo.id = 'userInfo' + socketId;
         return userInfo;
     }
 
@@ -109,22 +102,25 @@ var VoiceChat = (function() {
 
     function updateUserInfo(info) {
         var infoElement = document.getElementById('userInfo' + info.socketId);
-        if(infoElement && infoElement.childElementCount === 3) {
-            infoElement.children[0].innerText = info.username;
-            infoElement.children[1].innerText = info.isMicMuted;
-            infoElement.children[2].innerText = info.areSpeakersMuted;
-        }
-        else { console.log('WARNING: Couldn\'t update user info for', info.socketId); }
+        infoElement.innerText = info.username;
+        infoElement.classList.toggle('micMuted', info.isMicMuted);
+        infoElement.classList.toggle('speakersMuted', info.areSpeakersMuted);
+    }
+
+    function updateConnectionStatus(socketId) {
+        var infoElement = document.getElementById('userInfo' + socketId);
+        infoElement.classList.toggle('connected');
     }
 
 // Chat operations: muting etc.
 
     function toggleMuteOthers() {
-        participants.forEach(function(video) {
-            video.muted = !video.muted;
+        participants.forEach(function(p) {
+            p.videoTag.muted = !p.videoTag.muted;
         });
-        areSpeakersMuted = participants[0].muted;
+        areSpeakersMuted = participants[0].videoTag.muted || false;
         document.getElementById('voiceChat-MuteOthersBtn').textContent = areSpeakersMuted ? 'Unmute' : 'Mute';
+        sendMyUserInfoUpdate();
     }
 
     function toggleMuteMe() {
@@ -132,7 +128,7 @@ var VoiceChat = (function() {
         tracks.forEach(function(track) {
             track.enabled = !track.enabled;
         });
-        isMicMuted = !tracks[0].enabled
+        isMicMuted = !tracks[0].enabled || false;
         document.getElementById('voiceChat-MuteMeBtn').textContent = !isMicMuted ? 'Disable Mic' : 'Enable Mic';
         sendMyUserInfoUpdate();
     }
@@ -199,6 +195,8 @@ var VoiceChat = (function() {
             console.log('[add remote stream]: adding remote stream for', socketId);
             var videoTag = participants.filter(function(p) { return p.socketId === socketId; })[0].videoTag;                     
             rtc.attachStream(stream, videoTag.id);
+            //we're connected to the user so show in UI
+            updateConnectionStatus(socketId);
         });
 
         rtc.on('disconnect stream', function(data) {
