@@ -8,6 +8,9 @@
     bottom: 0;
     right: 0;
     z-index: 255;
+    font-family:"sans-serif";
+    min-width: 100px;
+    max-width: 200px;
 }
 #voiceChat .remoteStream { height: 0; width: 0; }
 
@@ -17,5 +20,17 @@
     color: #337ab7;
     padding: 3px;
     margin-top: 5px;
-    width: 100px;
+    width: 100%;
+}
+
+#voiceChat-user li {
+    opacity: .5;
+}
+#voiceChat-user li.connected {
+    opacity: 1;
+}
+
+#voiceChat-user {
+    list-style-type: circle;
+    padding-left: 20px;
 }
