@@ -1,3 +1,7 @@
+body {
+    margin: 0;
+}
+
 #voiceChat {
     visibility: hidden;
     position: fixed;
@@ -16,11 +20,14 @@
 
 #voiceChat-you {
     width: 20%;
+    position: absolute;
+    right: 0;
 }
 
 #voiceChat-videos {
-    width: 80%;
-    float: left;
+    position: absolute;
+    min-height: 100%;
+    width: auto;
 }
 
 #voiceChat button {
@@ -45,6 +52,6 @@
 }
 
 video {
-  -webkit-transform: scaleX(-1);
-  transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
 }
