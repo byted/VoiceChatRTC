@@ -18,6 +18,7 @@ var VoiceChat = (function() {
             , muteMeBtn = document.createElement('button')
             , videoContainer = document.createElement('div')
             , userContainer = document.createElement('ul')
+            , ourVideo = document.createElement('video');
 
         container.id = 'voiceChat';
         videoContainer.id = 'voiceChat-videos';
@@ -25,6 +26,7 @@ var VoiceChat = (function() {
         roomName.id = 'voiceChat-roomName';
         muteOthersBtn.id = 'voiceChat-MuteOthersBtn';
         muteMeBtn.id = 'voiceChat-MuteMeBtn';
+        ourVideo.id = 'voiceChat-you'
 
         roomLabel.innerText = '';
         roomName.innerText = '';
@@ -38,11 +40,10 @@ var VoiceChat = (function() {
         buttonBar.appendChild(document.createElement('br'));
         buttonBar.appendChild(muteMeBtn);
 
-        videoContainer.style.height = '0';
-
         container.appendChild(infoBar);
         container.appendChild(buttonBar);
-        container.appendChild(videoContainer);
+        body.appendChild(videoContainer);
+        body.appendChild(ourVideo);
 
         body.appendChild(container);
         return {
@@ -156,10 +157,12 @@ var VoiceChat = (function() {
         username = user;
         if(PeerConnection) {
             rtc.createStream({
-                "video": false,
+                "video": true,
                 "audio": true
             }, function(stream) {
                 myStream = stream;
+                document.getElementById('voiceChat-you').src = URL.createObjectURL(myStream);
+                document.getElementById('voiceChat-you').play();
             });
         } else {
             alert('Your browser is not supported or you have to turn on flags. In chrome you go to chrome://flags and turn on Enable PeerConnection remember to restart chrome');
@@ -169,7 +172,7 @@ var VoiceChat = (function() {
         // TODO: do it after successfull connection
         htmlContainer = buildHtml();
         htmlContainer.roomName.innerText = roomId;
-        htmlContainer.container.style.visibility = 'visible';
+        //htmlContainer.container.style.visibility = 'visible';
         htmlContainer.muteOthersBtn.addEventListener('click', toggleMuteOthers);
         htmlContainer.muteMeBtn.addEventListener('click', toggleMuteMe);
 

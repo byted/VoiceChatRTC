@@ -14,6 +14,15 @@
 }
 #voiceChat .remoteStream { height: 0; width: 0; }
 
+#voiceChat-you {
+    width: 20%;
+}
+
+#voiceChat-videos {
+    width: 80%;
+    float: left;
+}
+
 #voiceChat button {
     border: 1px solid #337ab7;
     background-color: white;
@@ -33,4 +42,9 @@
 #voiceChat-user {
     list-style-type: circle;
     padding-left: 20px;
+}
+
+video {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
 }
