@@ -9,7 +9,7 @@
 
     <body>
         <script type="text/javascript">
-            VoiceChat.init('ws://voice-chat-rtc.herokuapp.com/', 'foobar', true);
+            VoiceChat.init('ws://' + window.location.hostname + ':' + window.location.port, 'foobar', 'James', true);
         </script>
     </body>
 </html>
