@@ -9,7 +9,7 @@
 
     <body>
         <script type="text/javascript">
-            VoiceChat.init('ws://localhost:8090', 'foobar', 'James', true);
+            VoiceChat.init('ws://' + window.location.hostname + ':' + window.location.port, 'foobar', 'James', true);
         </script>
     </body>
 </html>
