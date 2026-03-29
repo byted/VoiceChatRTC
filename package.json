@@ -7,12 +7,12 @@
     "url": "https://github.com/byted/VoiceChatRTC.git"
   },
   "engines": {
-    "node": ">= 0.6.0"
+    "node": ">= 18.0.0"
   },
   "dependencies": {
-    "webrtc.io": "latest",
-    "webrtc.io-client": "latest",
-    "ws": "latest"
+    "webrtc.io": "^0.0.4",
+    "webrtc.io-client": "^0.0.2-3",
+    "ws": "^8.20.0"
   },
   "scripts": {
     "start": "node wsServer.js"
